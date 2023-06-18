@@ -33,14 +33,14 @@ def generate_answers(question):
 		while len(wrong_answers) < 3:
 				response = openai.Completion.create(
 						engine="text-davinci-003",
-						prompt=f"Write an incorrect answer to this question: {question} The answer should be clear, consise, and not include the words of the question. Do not include answers similar to any these previous answers: {correct_answer}, {', '.join(wrong_answers)}",
+						prompt=f"Write an incorrect answer to this question: {question} The answer should be clear, consise, and not include the words of the question. Do not include answers similar to any these previous answers: {', '.join(wrong_answers)}. Do not include any form of punctuation.",
 						max_tokens=50,
-						temperature=1,
+						temperature=.5,
 						n=1,
 						stop=None,
 				)
 				wrong_answer = response.choices[0].text.strip()
-				if wrong_answer not in wrong_answers:
+				if wrong_answer not in wrong_answers and len(wrong_answer) > 0:
 						wrong_answers.append(wrong_answer)
 
 		return correct_answer, wrong_answers
@@ -50,8 +50,8 @@ def generate_question(topic):
 		print("Generating question...")
 		response = openai.Completion.create(
 				model="text-davinci-003",
-				prompt=f"Write a quiz bowl question on this topic: {topic}. The question should be unique and consise, and easy to read and understand. The question should have a specific answer. The response should NEVER contain the answer.",
-				temperature=1.24,
+				prompt=f"Write a question on this topic: {topic}. The question should be unique and consise, and easy to read and understand. The question should have a specific answer. The response should NEVER contain the answer.",
+				temperature=1,
 				max_tokens=256,
 				top_p=1,
 				frequency_penalty=0.3,
