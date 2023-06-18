@@ -30,7 +30,7 @@
 	let end = false;
 
 	socket.on("state", ({ players: updatedPlayers }: { players: PlayerData[] }) => {
-		console.log(players)
+		console.log(players);
 		players = updatedPlayers.sort((a, b) => b.score - a.score);
 	});
 	socket.on("question", (qa: { question: string; answers: string[] }) => {
@@ -196,9 +196,10 @@
 		{:else if state === 2.5}
 			<div class="h-full text-4xl text-white flex items-center justify-center text-center px-10">
 				<div>
-				Question: {question}
-				<br />
-				Generating answers...</div>
+					Question: {question}
+					<br />
+					Generating answers...
+				</div>
 			</div>
 		{:else if state === 3}
 			<Question
@@ -210,11 +211,15 @@
 				}}
 			/>
 		{:else if state === 3.5}
-			You submitted your answer. Waiting...
+			<div class="h-full text-4xl text-white flex items-center justify-center text-center px-10">
+				You submitted your answer. Waiting...
+			</div>
 		{:else if state === 4}
-			The answer was: {correctAnswer}
+			<div class="h-full text-4xl text-white flex items-center justify-center text-center px-10">
+				The answer was: {correctAnswer}
+			</div>
 		{:else if state === 5}
-			<Leaderboard {players} end={end}/>
+			<Leaderboard {players} {end} />
 		{/if}
 	</div>
 	<div class="bg-blue-700 flex p-2 text-white">
