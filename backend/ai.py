@@ -10,6 +10,7 @@ except:
 		print("in production")
 
 openai.api_key = os.getenv("OPENAI_API_KEY")
+print(openai.api_key)
 correct_answer = ""
 
 
@@ -17,29 +18,60 @@ def generate_answers(question):
 		global correct_answer
 		print("Generating correct answer...")
 		# Generate one correct answer
-		response = openai.Completion.create(
-				engine="text-davinci-003",
-				prompt=f"Write the correct answer to this question: {question} The and should be clear, consise, and not include the words of the question.",
-				max_tokens=50,
-				temperature=0.05,
-				n=1,
-				stop=None,
-		)
-		correct_answer = response.choices[0].text.strip()
+		# response = openai.Completion.create(
+		# 		engine="text-davinci-003",
+		# 		prompt=f"Write the correct answer to this question: {question} The and should be clear, consise, and not include the words of the question.",
+		# 		max_tokens=50,
+		# 		temperature=0.05,
+		# 		n=1,
+		# 		stop=None,
+		# )
+		response = openai.ChatCompletion.create(
+		model="gpt-3.5-turbo",
+		temperature=.1,
+		max_tokens=50,
+		messages=[
+			{
+				"role": "system",
+				"content": "You are a bot that generates questions and answers for a quiz game app."
+			},
+			{
+				"role": "user",
+				"content":f"Write the correct answer to this question: {question} The and should be clear, consise, and not include the words of the question."
+			}
+		]
+	)
+		correct_answer = response.choices[0].message.content.strip()
+		correct_answer_length = len(correct_answer.split(" "))
 
 		# Generate three wrong answers
 		print("Generating wrong answers...")
 		wrong_answers = []
 		while len(wrong_answers) < 3:
-				response = openai.Completion.create(
-						engine="text-davinci-003",
-						prompt=f"Write an incorrect answer to this question: {question} The answer should be clear, consise, and not include the words of the question. Do not include answers similar to any these previous answers: {', '.join(wrong_answers)}. Do not include any form of punctuation.",
-						max_tokens=50,
-						temperature=.5,
-						n=1,
-						stop=None,
-				)
-				wrong_answer = response.choices[0].text.strip()
+				# response = openai.Completion.create(
+				# 		engine="text-davinci-003",
+				# 		prompt=f"Write an incorrect answer to this question: {question} The answer should be clear, consise, and not include the words of the question. Do not include answers similar to any these previous answers: {', '.join(wrong_answers)}. Do not include any form of punctuation.",
+				# 		max_tokens=50,
+				# 		temperature=.5,
+				# 		n=1,
+				# 		stop=None,
+				# )
+				response = openai.ChatCompletion.create(
+		model="gpt-3.5-turbo",
+		temperature=.75,
+		max_tokens=50,
+		messages=[
+			{
+				"role": "system",
+				"content": "You are a bot that generates questions and answers for a quiz game app."
+			},
+			{
+				"role": "user",
+				"content":f"Write an incorrect but possible answer to this question: {question} The answer should be clear, consise, and not include the words of the question. Do not include answers similar to any these previous answers: {', '.join(wrong_answers)}. Do not include any form of punctuation. The incorrect answer should be {correct_answer_length} words long."
+			}
+		]
+	)
+				wrong_answer = response.choices[0].message.content.strip()
 				if wrong_answer not in wrong_answers and len(wrong_answer) > 0:
 						wrong_answers.append(wrong_answer)
 
@@ -58,6 +90,25 @@ def generate_question(topic):
 				presence_penalty=0,
 		)
 		return response.choices[0].text.strip()
+
+def generate_question_new(topic, old_questions):
+	print("Generating question...")
+	response = openai.ChatCompletion.create(
+		model="gpt-3.5-turbo",
+		temperature=1.25,
+		max_tokens=50,
+		messages=[
+			{
+				"role": "system",
+				"content": "You are a bot that generates questions and answers for a quiz game app."
+			},
+			{
+				"role": "user",
+				"content": f"{random.randint(0, 100)}. Write a question on this topic: {topic}. The question should be unique and consise, and easy to read and understand. The question should have a specific answer. The response should NEVER contain the answer. Do not make questions similar to these old questions: {', '.join(old_questions)}."
+			}
+		]
+	)
+	return response.choices[0].message.content.strip()
 
 
 # Example usage

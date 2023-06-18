@@ -1,6 +1,6 @@
 import socketio
 from player import Player
-from ai import generate_answers, generate_question
+from ai import generate_answers, generate_question_new as generate_question
 
 import random
 import string
@@ -28,6 +28,7 @@ class Room:
 				self.topic = topic
 				self.correct_answer: str = None
 				self.start_time: int = None
+				self.prev_questions = []
 
 				@self.on("start")
 				async def start(player: Player, data = None):
@@ -52,10 +53,11 @@ class Room:
 		async def start(self):
 				await self.emit("start", {})
 
-				for _ in range(10):
+				for _ in range(5):
 						await self.emit("generateQuestion", {})
 						await asyncio.sleep(.1)
-						question = generate_question(self.topic)
+						question = generate_question(self.topic, self.prev_questions)
+						self.prev_questions.append(question)
 						await self.emit("generateAnswers", {"question": question})
 						await asyncio.sleep(.1)
 						correct_answer, wrong_answers = generate_answers(question)

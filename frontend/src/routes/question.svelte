@@ -8,7 +8,7 @@
 </script>
 
 <div class="w-full h-1/2 text-center flex flex-col items-center">
-	<p class="m-auto text-5xl">{question}</p>
+	<p class="m-auto text-5xl px-10">{question}</p>
 </div>
 <hr />
 <div class="w-full h-1/2 grid grid-cols-2 gap-4 p-4 text-base text-white">

@@ -190,11 +190,11 @@
 				{host}
 			/>
 		{:else if state === 2.25}
-			<div class="h-full text-6xl text-white flex items-center justify-center">
+			<div class="h-full text-6xl text-white flex items-center justify-center text-center px-10">
 				Generating question...
 			</div>
 		{:else if state === 2.5}
-			<div class="h-full text-4xl text-white flex items-center justify-center">
+			<div class="h-full text-4xl text-white flex items-center justify-center text-center px-10">
 				<div>
 				Question: {question}
 				<br />
