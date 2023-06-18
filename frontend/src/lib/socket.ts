@@ -1,6 +1,6 @@
 import { io } from 'socket.io-client';
 
-export const socket = io('http://localhost:8080', {transports: ['websocket']});
+export const socket = io(import.meta.env.DEV ? 'http://localhost:8080' : 'https://ktbyte-hack-2023.smart09codes.repl.co', {transports: ['websocket']});
 
 export const init = (name: string) => {
 	socket.emit('init', { name });
